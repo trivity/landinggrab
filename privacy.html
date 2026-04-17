@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Privacy Policy — Inbox Extractor</title>
+  <link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="favicon-16.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
+  <style>
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #0f172a; color: #f8fafc; line-height: 1.7; max-width: 760px; margin: 0 auto; padding: 40px 24px; }
+    h1 { font-size: 32px; margin-bottom: 12px; }
+    h2 { font-size: 22px; margin-top: 32px; margin-bottom: 12px; color: #60a5fa; }
+    p { margin-bottom: 12px; color: #cbd5e1; }
+    ul { margin-left: 24px; color: #cbd5e1; }
+    ul li { margin-bottom: 6px; }
+    a { color: #60a5fa; }
+    .updated { color: #64748b; font-size: 14px; margin-bottom: 32px; }
+  </style>
+</head>
+<body>
+  <h1>Privacy Policy</h1>
+  <p class="updated">Last updated: April 17, 2026</p>
+
+  <p>Inbox Extractor is a Chrome extension that extracts links from Facebook Messenger conversations and exports them to destinations you choose. This privacy policy describes what the extension accesses, what it does with that data, and your rights.</p>
+
+  <h2>What the extension accesses</h2>
+  <ul>
+    <li><strong>messenger.com page content.</strong> When you run an extraction, the extension reads the conversation DOM on the Messenger tab you're viewing to find link URLs, senders, timestamps, and message text surrounding those links.</li>
+    <li><strong>Your Google account (optional).</strong> If you choose to export to Google Sheets, the extension requests OAuth access to Google Sheets and Google Drive (read-only for Drive, so we can list your existing sheets). You authorize this through Google's standard consent flow. You can revoke access at any time from your Google account settings.</li>
+    <li><strong>Local browser storage.</strong> The extension saves your scheduled-job configurations and master-sheet ID locally in Chrome's storage so the extension remembers your settings between sessions.</li>
+  </ul>
+
+  <h2>What we do NOT do</h2>
+  <ul>
+    <li>We do <strong>not</strong> send your messages, links, or any Messenger content to any server we operate.</li>
+    <li>We do <strong>not</strong> store your messages or links on our infrastructure.</li>
+    <li>We do <strong>not</strong> track, profile, or sell any user data.</li>
+    <li>We do <strong>not</strong> use analytics, advertising, or third-party tracking inside the extension.</li>
+  </ul>
+
+  <h2>Where your data goes</h2>
+  <p>Extracted links and metadata travel from Messenger <em>directly</em> to the destination you choose:</p>
+  <ul>
+    <li><strong>Google Sheets:</strong> via Google's official Sheets API using your authorized OAuth token. Data goes into spreadsheets owned by your Google account.</li>
+    <li><strong>CSV / XLSX download:</strong> files are generated inside your browser and saved to your local Downloads folder.</li>
+    <li><strong>Clipboard:</strong> formatted text is copied to your system clipboard.</li>
+  </ul>
+
+  <h2>Permissions explained</h2>
+  <ul>
+    <li><strong>activeTab</strong> — read content on the Messenger tab when you click the extension icon.</li>
+    <li><strong>identity</strong> — request a Google OAuth token (only if you choose Sheets export).</li>
+    <li><strong>storage</strong> — save your settings locally in your browser.</li>
+    <li><strong>alarms</strong> — schedule periodic extractions you configure.</li>
+    <li><strong>notifications</strong> — alert you when a scheduled extraction needs your attention.</li>
+    <li><strong>scripting</strong> — inject the content script into Messenger when needed.</li>
+    <li><strong>Host permission for messenger.com</strong> — required so the extension can read conversations on messenger.com only. It has no access to other websites.</li>
+  </ul>
+
+  <h2>Data retention</h2>
+  <p>The extension keeps only your settings (export preferences, scheduled jobs, master sheet ID) in local browser storage. You can clear these at any time by uninstalling the extension, which wipes all stored settings.</p>
+
+  <h2>Children's privacy</h2>
+  <p>Inbox Extractor is not intended for children under 13. We do not knowingly collect information from children.</p>
+
+  <h2>Changes to this policy</h2>
+  <p>If we make material changes, we'll update the "Last updated" date at the top and note changes on the extension's listing page.</p>
+
+  <h2>Contact</h2>
+  <p>Questions? Email <a href="mailto:support@inbox-extractor.com">support@inbox-extractor.com</a>.</p>
+
+  <p style="margin-top:40px;"><a href="index.html">← Back to Inbox Extractor</a></p>
+</body>
+</html>

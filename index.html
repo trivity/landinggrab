@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Inbox Extractor — Extract Every Link From Messenger Into a Google Sheet</title>
+  <meta name="description" content="A Chrome extension that pulls every link from any Facebook Messenger conversation and exports it to Google Sheets, CSV, or XLSX with full metadata.">
+  <meta property="og:title" content="Inbox Extractor — Never lose a link in Messenger again">
+  <meta property="og:description" content="Extract every link from any Messenger chat, with sender, date, and context, into Google Sheets in one click.">
+  <link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="favicon-16.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
+  <link rel="shortcut icon" href="favicon-32.png">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: #0f172a;
+      color: #f8fafc;
+      line-height: 1.6;
+    }
+
+    /* Hero */
+    .hero {
+      padding: 80px 24px 60px;
+      text-align: center;
+      background: radial-gradient(ellipse at top, #1e3a5f 0%, #0f172a 60%);
+    }
+    .hero-icon {
+      width: 96px;
+      height: 96px;
+      margin-bottom: 24px;
+      filter: drop-shadow(0 12px 30px rgba(96,165,250,0.3));
+    }
+    .hero h1 {
+      font-size: 48px;
+      font-weight: 800;
+      margin-bottom: 16px;
+      letter-spacing: -0.02em;
+      background: linear-gradient(135deg, #60a5fa 0%, #a78bfa 50%, #f472b6 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .hero p.tagline {
+      font-size: 20px;
+      color: #cbd5e1;
+      max-width: 680px;
+      margin: 0 auto 32px;
+    }
+    .cta-btn {
+      display: inline-block;
+      padding: 16px 36px;
+      background: #10b981;
+      color: #0f172a;
+      text-decoration: none;
+      font-size: 18px;
+      font-weight: 700;
+      border-radius: 12px;
+      border: none;
+      cursor: pointer;
+      transition: transform 0.15s, box-shadow 0.15s;
+      box-shadow: 0 8px 24px rgba(16,185,129,0.3);
+    }
+    .cta-btn:hover { transform: translateY(-2px); box-shadow: 0 12px 32px rgba(16,185,129,0.4); }
+    .cta-price { font-size: 14px; color: #94a3b8; margin-top: 12px; }
+
+    /* Container */
+    .container { max-width: 1100px; margin: 0 auto; padding: 0 24px; }
+
+    /* Section */
+    section { padding: 80px 0; }
+    section h2 {
+      font-size: 36px;
+      font-weight: 700;
+      text-align: center;
+      margin-bottom: 48px;
+      letter-spacing: -0.02em;
+    }
+
+    /* Problem / solution */
+    .problem {
+      background: #1e293b;
+      border-radius: 16px;
+      padding: 40px;
+      margin-bottom: 48px;
+      border: 1px solid #334155;
+    }
+    .problem h3 { font-size: 22px; margin-bottom: 16px; color: #fca5a5; }
+    .problem p { color: #cbd5e1; font-size: 17px; }
+
+    /* Features */
+    .features {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 24px;
+    }
+    .feature {
+      background: #1e293b;
+      border: 1px solid #334155;
+      border-radius: 12px;
+      padding: 28px;
+      transition: transform 0.2s, border-color 0.2s;
+    }
+    .feature:hover { transform: translateY(-4px); border-color: #60a5fa; }
+    .feature-icon { font-size: 32px; margin-bottom: 12px; }
+    .feature h3 { font-size: 18px; margin-bottom: 8px; }
+    .feature p { color: #94a3b8; font-size: 14px; }
+
+    /* How it works */
+    .steps {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 24px;
+    }
+    .step {
+      text-align: center;
+      padding: 20px;
+    }
+    .step-num {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 48px;
+      height: 48px;
+      background: linear-gradient(135deg, #60a5fa, #a78bfa);
+      color: #0f172a;
+      font-weight: 800;
+      font-size: 20px;
+      border-radius: 50%;
+      margin-bottom: 12px;
+    }
+    .step h4 { font-size: 16px; margin-bottom: 6px; }
+    .step p { font-size: 13px; color: #94a3b8; }
+
+    /* Pricing */
+    .pricing {
+      background: linear-gradient(135deg, #1e3a5f 0%, #1e293b 100%);
+      border: 1px solid #60a5fa;
+      border-radius: 20px;
+      padding: 48px;
+      max-width: 520px;
+      margin: 0 auto;
+      text-align: center;
+      box-shadow: 0 24px 48px rgba(96,165,250,0.15);
+    }
+    .pricing .badge {
+      display: inline-block;
+      background: #10b981;
+      color: #0f172a;
+      padding: 4px 12px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 20px;
+    }
+    .pricing .price {
+      font-size: 64px;
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      margin-bottom: 8px;
+    }
+    .pricing .price .currency { font-size: 32px; vertical-align: super; color: #94a3b8; }
+    .pricing .price .cents { font-size: 32px; color: #94a3b8; }
+    .pricing .lifetime { color: #10b981; font-weight: 600; margin-bottom: 24px; }
+    .pricing ul {
+      list-style: none;
+      text-align: left;
+      max-width: 340px;
+      margin: 0 auto 32px;
+    }
+    .pricing ul li {
+      padding: 8px 0;
+      color: #cbd5e1;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .pricing ul li::before {
+      content: '✓';
+      color: #10b981;
+      font-weight: 700;
+      font-size: 18px;
+    }
+
+    /* FAQ */
+    .faq { max-width: 720px; margin: 0 auto; }
+    .faq-item {
+      background: #1e293b;
+      border: 1px solid #334155;
+      border-radius: 8px;
+      margin-bottom: 12px;
+      overflow: hidden;
+    }
+    .faq-q {
+      padding: 18px 20px;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .faq-q::after { content: '+'; color: #60a5fa; font-size: 24px; font-weight: 400; }
+    .faq-item.open .faq-q::after { content: '−'; }
+    .faq-a {
+      padding: 0 20px;
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.3s, padding 0.3s;
+      color: #94a3b8;
+      font-size: 15px;
+    }
+    .faq-item.open .faq-a { padding: 0 20px 18px; max-height: 300px; }
+
+    /* Footer */
+    footer {
+      text-align: center;
+      padding: 40px 24px;
+      border-top: 1px solid #1e293b;
+      color: #64748b;
+      font-size: 14px;
+    }
+    footer a { color: #94a3b8; text-decoration: none; margin: 0 12px; }
+    footer a:hover { color: #60a5fa; }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      .hero h1 { font-size: 36px; }
+      .hero p.tagline { font-size: 17px; }
+      section h2 { font-size: 28px; }
+      .steps { grid-template-columns: 1fr 1fr; }
+      .pricing { padding: 32px 24px; }
+      .pricing .price { font-size: 48px; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Hero -->
+  <section class="hero">
+    <img src="icon.png" alt="Inbox Extractor" class="hero-icon">
+    <h1>Never lose a link in Messenger again</h1>
+    <p class="tagline">
+      Extract every link from any Facebook Messenger conversation — with sender, date, and context — straight into Google Sheets, CSV, or XLSX in one click.
+    </p>
+    <a href="#buy" class="cta-btn">Get Inbox Extractor — $9.97</a>
+    <div class="cta-price">One-time payment · Lifetime updates · Works on unlimited conversations</div>
+  </section>
+
+  <!-- Problem -->
+  <section>
+    <div class="container">
+      <div class="problem">
+        <h3>Your important links are buried in years of chat history.</h3>
+        <p>
+          You share articles, YouTube videos, Google Docs, shopping links, memes — and then they vanish into an endless scroll.
+          Messenger has no link view. No search that actually finds them. No export. Just scrolling forever hoping you remember what day someone sent that thing.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Features -->
+  <section>
+    <div class="container">
+      <h2>Everything you need in one click</h2>
+      <div class="features">
+        <div class="feature">
+          <div class="feature-icon">🔍</div>
+          <h3>Smart Contact Search</h3>
+          <p>Search by name across all your chats — individual or group. Filter by type.</p>
+        </div>
+        <div class="feature">
+          <div class="feature-icon">📅</div>
+          <h3>All History or Date Range</h3>
+          <p>Grab everything from the beginning of time, or just the past week. You choose.</p>
+        </div>
+        <div class="feature">
+          <div class="feature-icon">📊</div>
+          <h3>Google Sheets Export</h3>
+          <p>Send directly to a new sheet, append to a master sheet, or pick an existing one.</p>
+        </div>
+        <div class="feature">
+          <div class="feature-icon">💾</div>
+          <h3>CSV &amp; XLSX Download</h3>
+          <p>Prefer files? Download a spreadsheet right to your computer with one click.</p>
+        </div>
+        <div class="feature">
+          <div class="feature-icon">🏷️</div>
+          <h3>Auto-Categorization</h3>
+          <p>Links are automatically tagged as Video, Article, Document, Social, Image, or Shopping.</p>
+        </div>
+        <div class="feature">
+          <div class="feature-icon">⏰</div>
+          <h3>Scheduled Runs</h3>
+          <p>Set it to grab new links every 6 hours, 12 hours, or daily — automatically.</p>
+        </div>
+        <div class="feature">
+          <div class="feature-icon">👥</div>
+          <h3>Group Chat Support</h3>
+          <p>Works with both 1:1 chats and group conversations. Captures who sent what.</p>
+        </div>
+        <div class="feature">
+          <div class="feature-icon">📝</div>
+          <h3>Full Metadata</h3>
+          <p>Every row includes URL, sender, date, message text, preview title, and more.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- How it works -->
+  <section style="background:#0a1020;">
+    <div class="container">
+      <h2>How it works</h2>
+      <div class="steps">
+        <div class="step">
+          <div class="step-num">1</div>
+          <h4>Install extension</h4>
+          <p>One click from the Chrome Web Store — no account needed.</p>
+        </div>
+        <div class="step">
+          <div class="step-num">2</div>
+          <h4>Pick a contact</h4>
+          <p>Search by name, filter people or groups.</p>
+        </div>
+        <div class="step">
+          <div class="step-num">3</div>
+          <h4>Choose export</h4>
+          <p>Google Sheets, CSV, XLSX, or clipboard.</p>
+        </div>
+        <div class="step">
+          <div class="step-num">4</div>
+          <h4>Watch it work</h4>
+          <p>Live activity log shows every link as it's found.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Pricing / Buy -->
+  <section id="buy">
+    <div class="container">
+      <h2>Get it once, keep it forever</h2>
+      <div class="pricing">
+        <span class="badge">Lifetime Access</span>
+        <div class="price">
+          <span class="currency">$</span>9<span class="cents">.97</span>
+        </div>
+        <div class="lifetime">One-time payment — no subscriptions</div>
+        <ul>
+          <li>Unlimited extractions</li>
+          <li>All export formats (Sheets, CSV, XLSX)</li>
+          <li>Scheduled auto-runs</li>
+          <li>Group chat support</li>
+          <li>All future updates included</li>
+          <li>Priority email support</li>
+        </ul>
+        <!-- REPLACE THIS HREF WITH YOUR STRIPE PAYMENT LINK -->
+        <a href="https://buy.stripe.com/8x2aEXePs8pX3oZaNSdnW0T" class="cta-btn" style="width:100%;">Buy Now — Instant Access</a>
+        <div class="cta-price">Secure checkout via Stripe · 7-day money-back guarantee</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ -->
+  <section style="background:#0a1020;">
+    <div class="container">
+      <h2>Frequently asked questions</h2>
+      <div class="faq">
+        <div class="faq-item">
+          <div class="faq-q">Does this work with end-to-end encrypted chats?</div>
+          <div class="faq-a">Chrome blocks extensions from accessing end-to-end encrypted Messenger chats (the `/e2ee/` URLs). Inbox Extractor works on regular Messenger conversations. Most business pages, older chats, and many personal chats still use the standard non-encrypted mode.</div>
+        </div>
+        <div class="faq-item">
+          <div class="faq-q">Do you store my messages or link data?</div>
+          <div class="faq-a">No. Everything happens locally in your browser. Links go directly from Messenger to your Google Sheet or downloads folder. We never see your data.</div>
+        </div>
+        <div class="faq-item">
+          <div class="faq-q">Do I need a Google account?</div>
+          <div class="faq-a">Only if you want to export directly to Google Sheets. CSV, XLSX, and clipboard exports work with no account needed.</div>
+        </div>
+        <div class="faq-item">
+          <div class="faq-q">What if it stops working after a Messenger update?</div>
+          <div class="faq-a">Updates are included for life. If Facebook changes their page structure, we'll push a fix via the Chrome Web Store automatically.</div>
+        </div>
+        <div class="faq-item">
+          <div class="faq-q">Can I get a refund?</div>
+          <div class="faq-a">Yes. If it doesn't work for you within 7 days of purchase, email us for a full refund.</div>
+        </div>
+        <div class="faq-item">
+          <div class="faq-q">Does it work on Safari or Firefox?</div>
+          <div class="faq-a">Not yet — Chrome and Chrome-based browsers (Edge, Brave, Opera) only for now.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <p>© 2026 Inbox Extractor. Not affiliated with Meta or Facebook.</p>
+    <p style="margin-top:8px;">
+      <a href="privacy.html">Privacy Policy</a> ·
+      <a href="terms.html">Terms</a> ·
+      <a href="mailto:support@inbox-extractor.com">Contact</a>
+    </p>
+  </footer>
+
+  <script>
+    // FAQ toggle
+    document.querySelectorAll('.faq-item').forEach(item => {
+      item.querySelector('.faq-q').addEventListener('click', () => {
+        item.classList.toggle('open');
+      });
+    });
+  </script>
+
+</body>
+</html>
