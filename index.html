@@ -27,21 +27,19 @@
       text-align: center;
       background: radial-gradient(ellipse at top, #1e3a5f 0%, #0f172a 60%);
     }
-    .hero-icon {
-      width: 96px;
-      height: 96px;
-      margin-bottom: 24px;
-      filter: drop-shadow(0 12px 30px rgba(96,165,250,0.3));
+    .hero-logo {
+      max-width: 520px;
+      width: 85%;
+      height: auto;
+      margin-bottom: 32px;
+      filter: drop-shadow(0 12px 40px rgba(96,165,250,0.35));
     }
     .hero h1 {
-      font-size: 48px;
+      font-size: 42px;
       font-weight: 800;
       margin-bottom: 16px;
       letter-spacing: -0.02em;
-      background: linear-gradient(135deg, #60a5fa 0%, #a78bfa 50%, #f472b6 100%);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
+      color: #f8fafc;
     }
     .hero p.tagline {
       font-size: 20px;
@@ -241,7 +239,7 @@
 
   <!-- Hero -->
   <section class="hero">
-    <img src="icon.png" alt="Inbox Extractor" class="hero-icon">
+    <img src="logo.png" srcset="logo.png 1x, logo@2x.png 2x" alt="Inbox Extractor" class="hero-logo">
     <h1>Never lose a link in Messenger again</h1>
     <p class="tagline">
       Extract every link from any Facebook Messenger conversation — with sender, date, and context — straight into Google Sheets, CSV, or XLSX in one click.
